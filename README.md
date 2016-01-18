@@ -1,3 +1,4 @@
 # microservices
 
-Initial project generated from http://start.spring.io/
+- Adding support to spring-mvc 
+- Publishing a simple endpoint
