@@ -1,6 +1,7 @@
 package com.udemy.inventory.boundary;
 
 import com.udemy.inventory.entity.Manufacturer;
+import com.udemy.inventory.exceptions.ResourceNotFoundException;
 import com.udemy.inventory.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,7 +40,7 @@ public class ManufacturerController {
     public ResponseEntity<?> find(@PathVariable long manufacturerId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
         if (manufacturer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Manufacturer not found with id: " + manufacturerId);
         }
         return new ResponseEntity<>(manufacturer, HttpStatus.OK);
     }
