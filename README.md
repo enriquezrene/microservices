@@ -1,3 +1,3 @@
 # microservices
 
-Initial project generated from http://start.spring.io/
+Project with support for spring-data-jpa
