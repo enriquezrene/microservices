@@ -3,9 +3,13 @@ package com.udemy.inventory.boundary;
 import com.udemy.inventory.entity.Manufacturer;
 import com.udemy.inventory.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
+import java.net.URI;
 
 /**
  * Created by rene on 18/01/16.
@@ -18,18 +22,30 @@ public class ManufacturerController {
     private ManufacturerRepository manufacturerRepository;
 
     @RequestMapping(method = RequestMethod.POST)
-    public long save(@RequestBody Manufacturer manufacturer) {
+    public ResponseEntity<?> save(@RequestBody Manufacturer manufacturer) {
         manufacturer = manufacturerRepository.save(manufacturer);
-        return manufacturer.getId();
+
+        URI savedManufacturerUri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}").buildAndExpand(manufacturer.getId()).toUri();
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setLocation(savedManufacturerUri);
+
+        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{manufacturerId}", method = RequestMethod.GET)
-    public Manufacturer find(@PathVariable long manufacturerId) {
-        return manufacturerRepository.findOne(manufacturerId);
+    public ResponseEntity<?> find(@PathVariable long manufacturerId) {
+        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
+        if (manufacturer == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(manufacturer, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Manufacturer> getAll() {
-        return manufacturerRepository.findAll();
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(manufacturerRepository.findAll(), HttpStatus.OK);
     }
 }

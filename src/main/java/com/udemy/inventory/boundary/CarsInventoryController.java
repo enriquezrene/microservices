@@ -5,8 +5,13 @@ import com.udemy.inventory.entity.Manufacturer;
 import com.udemy.inventory.repositories.CarRepository;
 import com.udemy.inventory.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -23,30 +28,45 @@ public class CarsInventoryController {
     private ManufacturerRepository manufacturerRepository;
 
     @RequestMapping(value = "/{manufacturerId}/cars", method = RequestMethod.POST)
-    public long save(@RequestBody Car car, @PathVariable long manufacturerId) {
+    public ResponseEntity<?> save(@RequestBody Car car, @PathVariable long manufacturerId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
         if (manufacturer == null) {
-            return -1;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         car.setManufacturer(manufacturer);
-        return carRepository.save(car).getId();
+        car = carRepository.save(car);
+
+        URI savedCarUri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}").buildAndExpand(car.getId()).toUri();
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setLocation(savedCarUri);
+
+        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{manufacturerId}/cars/{carId}", method = RequestMethod.GET)
-    public Car find(@PathVariable long manufacturerId, @PathVariable long carId) {
+    public ResponseEntity<?> find(@PathVariable long manufacturerId, @PathVariable long carId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
         if (manufacturer == null) {
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return carRepository.findOne(carId);
+
+        Car car = carRepository.findOne(carId);
+        if (car == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{manufacturerId}/cars", method = RequestMethod.GET)
-    public List<Car> getAll(@PathVariable long manufacturerId) {
+    public ResponseEntity<?> getAll(@PathVariable long manufacturerId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
         if (manufacturer == null) {
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return carRepository.findByManufacturer(manufacturer);
+        List<Car> cars = carRepository.findByManufacturer(manufacturer);
+        return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 }
