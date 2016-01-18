@@ -3,10 +3,7 @@ package com.udemy.inventory.boundary;
 import com.udemy.inventory.entity.Manufacturer;
 import com.udemy.inventory.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +21,11 @@ public class ManufacturerController {
     public long save(@RequestBody Manufacturer manufacturer) {
         manufacturer = manufacturerRepository.save(manufacturer);
         return manufacturer.getId();
+    }
+
+    @RequestMapping(value = "/{manufacturerId}", method = RequestMethod.GET)
+    public Manufacturer find(@PathVariable long manufacturerId) {
+        return manufacturerRepository.findOne(manufacturerId);
     }
 
     @RequestMapping(method = RequestMethod.GET)

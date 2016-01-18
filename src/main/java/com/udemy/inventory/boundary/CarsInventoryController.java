@@ -32,6 +32,15 @@ public class CarsInventoryController {
         return carRepository.save(car).getId();
     }
 
+    @RequestMapping(value = "/{manufacturerId}/cars/{carId}", method = RequestMethod.GET)
+    public Car find(@PathVariable long manufacturerId, @PathVariable long carId) {
+        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
+        if (manufacturer == null) {
+            return null;
+        }
+        return carRepository.findOne(carId);
+    }
+
     @RequestMapping(value = "/{manufacturerId}/cars", method = RequestMethod.GET)
     public List<Car> getAll(@PathVariable long manufacturerId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
