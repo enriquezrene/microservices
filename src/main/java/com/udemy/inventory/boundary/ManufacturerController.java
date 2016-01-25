@@ -40,7 +40,7 @@ public class ManufacturerController {
     public ResponseEntity<?> find(@PathVariable long manufacturerId) {
         Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
         if (manufacturer == null) {
-            throw new ResourceNotFoundException("Manufacturer not found with id: " + manufacturerId);
+            throw new ResourceNotFoundException("Manufacturer with id: " + manufacturerId + " not found.");
         }
         return new ResponseEntity<>(manufacturer, HttpStatus.OK);
     }

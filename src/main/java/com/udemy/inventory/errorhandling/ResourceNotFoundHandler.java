@@ -17,7 +17,6 @@ public class ResourceNotFoundHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException
                                                                      exception, HttpServletRequest request) {
-
         ErrorInformation errorInformation = new ErrorInformation.Builder().withDescription(exception.getMessage()).
                 withStatus(HttpStatus.NOT_FOUND).build();
         return new ResponseEntity<>(errorInformation, null, HttpStatus.NOT_FOUND);

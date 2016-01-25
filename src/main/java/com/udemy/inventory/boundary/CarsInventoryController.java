@@ -2,6 +2,7 @@ package com.udemy.inventory.boundary;
 
 import com.udemy.inventory.entity.Car;
 import com.udemy.inventory.entity.Manufacturer;
+import com.udemy.inventory.exceptions.ResourceNotFoundException;
 import com.udemy.inventory.repositories.CarRepository;
 import com.udemy.inventory.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,7 @@ public class CarsInventoryController {
 
     @RequestMapping(value = "/{manufacturerId}/cars", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody Car car, @PathVariable long manufacturerId) {
-        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
-        if (manufacturer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Manufacturer manufacturer = getManufacturer(manufacturerId);
         car.setManufacturer(manufacturer);
         car = carRepository.save(car);
 
@@ -48,25 +46,27 @@ public class CarsInventoryController {
 
     @RequestMapping(value = "/{manufacturerId}/cars/{carId}", method = RequestMethod.GET)
     public ResponseEntity<?> find(@PathVariable long manufacturerId, @PathVariable long carId) {
-        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
-        if (manufacturer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Manufacturer manufacturer = getManufacturer(manufacturerId);
 
         Car car = carRepository.findOne(carId);
         if (car == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Car with id: " + carId + " not found.");
         }
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{manufacturerId}/cars", method = RequestMethod.GET)
     public ResponseEntity<?> getAll(@PathVariable long manufacturerId) {
-        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
-        if (manufacturer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Manufacturer manufacturer = getManufacturer(manufacturerId);
         List<Car> cars = carRepository.findByManufacturer(manufacturer);
         return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    private Manufacturer getManufacturer(@PathVariable long manufacturerId) {
+        Manufacturer manufacturer = manufacturerRepository.findOne(manufacturerId);
+        if (manufacturer == null) {
+            throw new ResourceNotFoundException("Manufacturer with id: " + manufacturerId + " not found.");
+        }
+        return manufacturer;
     }
 }
