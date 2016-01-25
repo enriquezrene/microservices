@@ -5,6 +5,8 @@ Using HTTP Status codes
 Adding spring-boot-devtools to automatically restart whenever files on the classpath change. 
 If you're using IntelliJ force the build with the option: build-> make project (CTRL+F9)  
 
+Adding error description in the responses
+
 ```xml
         <dependency>
             <groupId>org.springframework.boot</groupId>
