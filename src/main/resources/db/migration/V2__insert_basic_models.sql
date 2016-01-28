@@ -1,0 +1,2 @@
+INSERT INTO model VALUES (1, '4x4');
+INSERT INTO model VALUES (2, 'SUV');

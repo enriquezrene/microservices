@@ -1,4 +1,5 @@
-create table model (
-    id int not null,
-    name varchar(100) not null
+CREATE TABLE model (
+    id INT NOT NULL,
+    name VARCHAR(100),
+    CONSTRAINT model_pkey PRIMARY KEY (id)
 );
