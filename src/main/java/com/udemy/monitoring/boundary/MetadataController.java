@@ -14,13 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/metadata")
 public class MetadataController {
 
-    @Value("response.timeout=60}")
-    private int timeout;
+    @Value("${metadata.timeOut}")
+    private int timeOut;
 
+    @Value("${configuration.domain}")
+    private String domain;
 
-    @RequestMapping("/")
-    public int queryTimeOut() {
-        return this.timeout;
+    @RequestMapping("/timeout")
+    public int getTimeOut() {
+        return this.timeOut;
+    }
+
+    @RequestMapping("/domain")
+    public String getDomain() {
+        return this.domain;
     }
 
 }
